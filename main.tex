@@ -1,0 +1,236 @@
+\documentclass[10pt,landscape,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{tikz}
+\usetikzlibrary{shapes,positioning,arrows,fit,calc,graphs,graphs.standard}
+\usepackage[nosf]{kpfonts}
+\usepackage[t1]{sourcesanspro}
+\usepackage{multicol}
+\usepackage{wrapfig}
+\usepackage[margin=0.125in]{geometry}
+\usepackage{savetrees}
+\usepackage[framemethod=tikz]{mdframed}
+\usepackage{microtype}
+\usepackage{pdfpages}
+
+\usepackage{amsmath}
+\DeclareMathOperator{\Tr}{Tr}
+\DeclareMathOperator{\rref}{rref}
+
+\newenvironment{amatrix}[1]{%
+  \left[\begin{array}{@{}*{#1}{c}|c@{}}
+}{%
+  \end{array}\right]
+}
+
+\makeatletter
+\newcommand*\bigcdot{\mathpalette\bigcdot@{.5}}
+\newcommand*\bigcdot@[2]{\mathbin{\vcenter{\hbox{\scalebox{#2}{$\m@th#1\bullet$}}}}}
+\makeatother
+
+\let\bar\overline
+
+\begin{document}
+\small
+\begin{multicols*}{3}
+  \section{Four Fundamental Subspaces}
+  \begin{tikzpicture}
+  \draw[rotate around={45:(0,0)}] (0,0) rectangle (2,1);
+  \node[] at (0,1) {Row Space};
+  \node[] at (0,0.5) {dim = r};
+
+
+  \draw[rotate around={-45:(0,0)}] (0,0) rectangle (1.5,-1);
+  \node[] at (0,-1) {Nullspace};
+  \node[] at (0,-1.5) {dim = n - r};
+
+  \draw[rotate around={-45:(4,0)}] (2,0) rectangle (4,1);
+  \node[] at (4,1) {Column Space};
+  \node[] at (4,0.5) {dim = r};
+
+
+  \draw[rotate around={45:(4,0)}] (2.5,0) rectangle (4,-1);
+  \node[] at (4,-1) {left nullspace};
+  \node[] at (4,-1.5) {dim = m - r};
+
+  \draw (0,0) ellipse (2cm and 3cm);
+  \node[] at (-1.5,0) {\large{$R^n$}};
+
+  \draw (4,0) ellipse (2cm and 3cm);
+  \node[] at (5.5,0) {\large{$R^m$}};
+
+
+  \end{tikzpicture}
+
+  \section{Eigenvalues, Eigenvectors}
+  \begin{itemize}
+    \item $Ax = \lambda x$
+    \item $Tr(A) = \sum_{i=1}^n \lambda_i$
+    \item For an upper or lower triangular matrix, the eigenvalues sit on the
+      diagonal
+
+
+  \end{itemize}
+  \subsection{Special Case: 2x2}
+  $p(\lambda) = \lambda^2 - \Tr(A) + \det(A)$
+  \subsection{Finding Eigenspaces}
+  To find the eigenspace given an eigenvalue, $lambda_i$:
+  \begin{enumerate}
+    \item Use $\rref$ to solve for the nullspace of the matrix $A-\lambda_i I$
+          \begin{math}
+            \rref(
+              \begin{amatrix}{1}
+                 A-\lambda_i I & 0
+              \end{amatrix}
+            )
+          \end{math}
+    \item Write down a vector equation from the $\rref$ result
+    \item Read off the vectors multiplied by free variables on the RHS of the
+      equation (these are the basis for the eigenspace)
+  \end{enumerate}
+
+
+  \section{Diagonalization}
+  \begin{align*}
+    A \vec{x_1} &= \lambda_1 \vec{x_1} \\
+    A \vec{x_2} &= \lambda_2 \vec{x_2} \\
+    A \begin{bmatrix} \vec{x_1} & \vec{x_2} \end{bmatrix} &= \begin{bmatrix}
+  \lambda_1 \vec{x_1} & \lambda_2 \vec{x_2} \end{bmatrix}\\
+                        &= \begin{bmatrix} \vec{x_1} & \vec{x_2} \end{bmatrix}
+                        \begin{bmatrix} \lambda_1 & 0 \\ 0 & \lambda_2 \end{bmatrix}
+  \end{align*}
+
+                        Let the eigenvector matrix, $\begin{bmatrix} \vec{x_1} &
+                        \vec{x_2} \end{bmatrix}$, be called $P$.
+
+                        Let the eigenvalue matrix, $\begin{bmatrix} \lambda_1 &
+                        0 \\ 0 & \lambda_2 \end{bmatrix}$, be called D.
+
+                        We have shown that we can write $AP = PD$. We can
+                        rewrite this to see other forms, like $P^{-1} A P = D$
+                        and $A = PDP^{-1}$.
+  \subsection{Powers of Matrices}
+  The above diagonalization leads to an easy analysis of powers of matrices. For
+  instance:
+
+  \begin{align*}
+    A^2 &= PDP^{-1}PDP^{-1} \\
+        &= PDIDP^{-1} \\
+        &= PD^2P^{-1}
+  \end{align*}
+
+  In general, $A^n = PD^n P^{-1}$.
+
+  \subsection{Conditions for Diagonalization}
+  Having $n$ distinct eigenvalues is sufficient to be diagonalizable.
+  Having $n$ linearly independent eigenvectors is necessary and sufficient.
+
+  \section{Orthogonal Projection}
+
+  \begin{tikzpicture}
+  \draw   (2,0) -- (-1, 0)
+          (0,2) -- (0,-1);
+  \draw[->](0,0) -- (1.8,0.6);
+  \draw[->](0,0) -- (0.75, 0.75);
+  \draw (0.9, 0.3) -- (0.75, 0.75);
+  \filldraw (0.9, 0.3) circle[radius=1.5pt];
+  \node[below right=0pt of {(0.9, 0.3)}, outer sep=1pt,fill=white] {$\hat{y}$};
+  \node[above right=1pt of {(0.9, 0.3)}] {$\vec{z}$};
+  \node[right=1pt of {(1.8, 0.6)}, outer sep=1pt,fill=white] {$\vec{u}$};
+  \node[above left=1pt of {(0.75, 0.75)}, outer sep=1pt,fill=white] {$\vec{y}$};
+  \end{tikzpicture}
+
+  Let $\vec{z} = \vec{y} - \hat{y}$ and $\hat{y} = \alpha \vec{u}$. We know that
+  $\vec{z} \perp \vec{u}$, therefore $\vec{z} \bigcdot \vec{u} = 0$.
+
+  \begin{align*}
+    \vec{u} \bigcdot \vec{z} &= 0 \\
+    \vec{u} \bigcdot ( \vec{y} - \hat{y} ) &= 0 \\
+    \vec{u} \bigcdot ( \vec{y} - \alpha \vec{u}) &= 0 \\
+    \vec{u} \bigcdot \vec{y} - \alpha \vec{u} \bigcdot \vec{u} &= 0\\
+    \therefore \alpha = \frac{ \vec{u} \bigcdot \vec{y} }{ \vec{u} \bigcdot
+    \vec{u} }
+  \end{align*}
+
+  \subsection{Gram Schmidt Process}
+  Given a set of vectors, we can produce an orthogonal basis for the same space
+  using the gram schmidt process. 
+
+  Take the first vector as is, then for each following vector subtract off the
+  amount projected in each preceeding basis vector.
+
+  Once we have a set of orthogonal vectors, then we can normalize them to form an
+  orthonormal set.
+
+  An $m$ by $n$ matrix $U$ is orthonormal if and only if $U^TU = I$.
+  
+  \subsubsection{QR Factorization}
+  Given an orthonormal basis $Q$, we often want to find how to decompose $A$
+  such that $A = QR$. To find R, we use the fact that $Q^T = Q^{-1}$, thus $Q^TA
+  = Q^TQR = Q^{-1}QR = R$. 
+
+
+  \section{Symmetric Matrices}
+  A symmetric matrix is one such that $S^T = S$. These matrices will have real
+  eigenvalues and orthogonal eigenvectors.
+
+  An antisymmetric matrix is one such that $A^T = -A$. These matrcies will have
+  pure imaginary eigenvalues and orthogonal complex eigenvectors.
+
+  An orthogonal matrix $Q^TQ = I$ will have $|\lambda| = 1$ for each eigenvalue,
+  and orthogonal complex eigenvectors.
+
+  Important note! When we say orthogonal eigenvectors, we mean for different
+  eigenspaces. If you get 2 or more eigenvectors for a particular $\lambda$,
+  these will likely not be orthogonal and you will need to use the Gram Schmidt
+  process to make them orthogonal.
+
+  \subsection{Note on Orthogonal Diagonalization}
+
+  An $n$ by $n$ matrix, $A$, is orthogonally diagonalizable if and only if $A$
+  is symmetric.
+
+  \section{Useful Notes}
+  If $A$ is an $n$ by $n$ matrix and A is full rank, then the following are true
+  and equivalent.
+
+  \begin{itemize}
+    \item A is invertible
+    \item $A\vec{x} = \vec{0}$ has only the trivial solution, since the
+      determinant cannot be 0
+    \item $\rref (A) = I_n$
+    \item $A\vec{x} = \vec{b}$ is consistent $\forall \vec{b} \subset$ n x 1 matrices.
+    \item $A\vec{x} = \vec{b}$ has exactly one solution $\forall \vec{b} \subset$ n x 1 matrices.
+    \item $\det(A) \neq 0$
+    \item Column vectors of A are linearly independent
+    \item Row vectors of A are linearly independent
+    \item $C(A)$ span $R^n$
+    \item $C(A^T)$ span $R^n$
+    \item $C(A)$ form a basis for $R^n$
+    \item $C(A^T)$ form a basis for $R^n$
+    \item A has rank $n$
+    \item A has nullity 0
+    \item The orthogonal complement of the nullspace of A is $R^n$
+    \item The orthogonal complement of the row space of A is $\{ 0 \}$
+    \item $A^T A$ is invertible
+    \item $\lambda = 0$ is not an eigenvalue of A
+  \end{itemize}
+
+ \section{True / False Gotchas}
+ \begin{itemize}
+   \item \textbf{FALSE}: `If $A\vec{x} = \lambda \vec{x}$ for some $\vec{x}$ then $\lambda$ is an
+    eigenvalue of A' (not just some vector, a \textbf{non zero} vector)
+  \item \textbf{TRUE}: `A matrix A is not invertible iff 0 is an eigenvalue of
+    A.' ($A\vec{x} = 0\vec{x} \to \det(A) = 0$ for a non-trivial solution)
+  \item \textbf{FALSE}: `An elementary row operation does not change the
+    determinant' (it does not change the magnitude, but a row swap flips the
+    sign)
+  \item \textbf{FALSE}: `If $\{ \vec{v_1}, \vec{v_2}, \vec{v_3} \}$ is an
+    orthogonal basis for W, then multiplying $\vec{v_3}$ by a scalar $c$ gives a
+    new orthogonal basis' (consider the scalar $c=0$, it forms a new basis of
+    lower dimension)
+ \end{itemize}
+
+\end{multicols*}
+\end{document}
